@@ -1,0 +1,48 @@
+<!doctype html>
+<html><body>
+<div id="app"></div>
+<script>
+// Minimal imitation of Virgin Atlantic Concierge AI (Beta v3.2) for offline tests.
+const app = document.getElementById('app');
+function onboarding(n) {
+  app.innerHTML = `<h1>Screen ${n}</h1><button id="next">Next</button>`;
+  document.getElementById('next').onclick = () => n < 2 ? onboarding(n + 1) : terms();
+}
+function terms() {
+  app.innerHTML = `
+    <p>Before we start, a few things to know:</p>
+    <label><input type="checkbox" data-testid="accept-terms-checkbox" style="opacity:0;position:absolute">
+      I understand and accept the conditions of carriage and privacy policy</label>
+    <button type="submit" id="start" disabled aria-label="Start conversation with Concierge AI">Start a chat</button>`;
+  const box = document.querySelector('[data-testid=accept-terms-checkbox]');
+  box.onchange = () => { document.getElementById('start').disabled = !box.checked; };
+  document.getElementById('start').onclick = chat;
+}
+function chat() {
+  app.innerHTML = `<div id="log"></div><textarea placeholder="Reply to message"></textarea>
+    <button data-testid="send-button" aria-label="Record or send message"></button>`;
+  document.querySelector('[data-testid=send-button]').onclick = () => {
+    const q = document.querySelector('textarea').value;
+    document.querySelector('textarea').value = '';
+    document.getElementById('log').insertAdjacentHTML('beforeend', `<div data-role="user">${q}</div>`);
+    const msg = document.createElement('div');
+    msg.setAttribute('data-role', 'assistant');
+    msg.innerHTML = `<svg data-testid="tailfin-loader-component"></svg><div class="body"></div>`;
+    document.getElementById('log').appendChild(msg);
+    const words = `Answer to: ${q}. Economy Classic includes one 23kg bag.`.split(' ');
+    let i = 0;
+    const timer = setInterval(() => {
+      msg.querySelector('.body').textContent = words.slice(0, ++i).join(' ');
+      if (i === words.length) {
+        clearInterval(timer);
+        msg.querySelector('svg').remove();
+        msg.insertAdjacentHTML('beforeend', `
+          <div class="_links_x"><a href="#">What is my checked in baggage allowance?</a></div>
+          <div data-testid="message-actions-container"><button aria-label="Like message"></button></div>`);
+      }
+    }, 60);
+  };
+}
+onboarding(1);
+</script>
+</body></html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html><body>
+<div role="log" aria-label="Chat messages"></div>
+<textarea placeholder="Message…"></textarea>
+<script>
+// Minimal imitation of the Ada messaging app iframe.
+const log = document.querySelector('[role=log]');
+function agent(text) {
+  log.insertAdjacentHTML('beforeend',
+    `<div data-message-id="${Math.random()}"><span class="sr-only">Message from Test AI Agent:</span>` +
+    `<div class="ada-markdown"><p>${text}</p></div></div>`);
+}
+// Two greeting bubbles, the second one late, as on the live pages.
+setTimeout(() => agent('Hello! I am your AI Virtual Assistant.'), 200);
+setTimeout(() => agent('How can I assist you today?'), 1500);
+document.querySelector('textarea').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const q = e.target.value;
+  e.target.value = '';
+  log.insertAdjacentHTML('beforeend',
+    `<div><span class="sr-only">Message from you:</span><div>${q}</div><button>Suggested reply</button></div>`);
+  setTimeout(() => agent(`Answer to: ${q}`), 400);
+  setTimeout(() => agent('Pets travel in the cargo hold.'), 2500);
+});
+</script>
+</body></html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html><body>
+<div id="app">
+  <button>Allow all</button>
+  <button id="chat-help-button">Chat</button>
+</div>
+<script>
+// Minimal imitation of finnair.com + the Sisu chat widget for offline tests.
+const app = document.getElementById('app');
+document.getElementById('chat-help-button').onclick = () => {
+  app.insertAdjacentHTML('beforeend', `<div id="panel"><h2>Ask Sisu</h2><button id="chat-with-us">Chat with us</button></div>`);
+  document.getElementById('chat-with-us').onclick = () => {
+    document.getElementById('panel').innerHTML = `
+      <form>
+        <label for="firstName">First name</label><input id="firstName">
+        <label for="lastName">Family name</label><input id="lastName">
+        <label for="email">Email address</label><input id="email">
+        <p>Is your question related to an existing booking?</p>
+        <label><input type="radio" name="booking" value="yes">Yes</label>
+        <label><input type="radio" name="booking" value="no">No</label>
+        <button type="button" id="start">Start the chat</button>
+      </form>`;
+    document.getElementById('start').onclick = () => {
+      const ok = ['firstName', 'lastName', 'email'].every(id => document.getElementById(id).value)
+        && document.querySelector('input[value=no]').checked;
+      if (!ok) return;
+      document.getElementById('panel').innerHTML =
+        `<iframe src="https://finnair.my.site.com/ESWtest/?lwc.mode=prod" width="400" height="500"></iframe>`;
+    };
+  };
+};
+</script>
+</body></html>

@@ -1,0 +1,17 @@
+[project]
+name = "browser-bots"
+version = "0.1.0"
+description = "OpenAI-compatible APIs that drive web chatbots (Virgin Atlantic, Finnair, China Airlines, Malaysia Airlines, Philippine Airlines, Vietjet) through a real browser"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "playwright>=1.45",
+    "uvicorn>=0.30",
+]
+
+[dependency-groups]
+dev = ["pytest>=8", "openai>=1.40", "httpx>=0.27"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

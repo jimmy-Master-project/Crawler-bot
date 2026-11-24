@@ -1,0 +1,30 @@
+<!doctype html>
+<html><body>
+<div class="wc-message-group-content"></div>
+<input type="text" class="wc-shellinput" placeholder="輸入你的訊息...">
+<script>
+// Minimal imitation of the Bot Framework WebChat page China Airlines uses.
+const log = document.querySelector('.wc-message-group-content');
+function bot(html, feedback) {
+  log.insertAdjacentHTML('beforeend',
+    `<div class="wc-message wc-message-from-bot"><div class="wc-message-content">` +
+    `<div class="format-markdown">${html}</div>` +
+    (feedback ? `<div class="wc-message-feedback"><span>這則回覆是否對您有幫助 ?</span></div>` : '') +
+    `</div></div><div class="wc-message-from wc-message-from-bot"><span>AI 客服</span></div>`);
+}
+// Welcome, usage notice and news, a little apart, like the live page.
+setTimeout(() => bot('<p>您好，我是華航 AI 客服</p>'), 200);
+setTimeout(() => bot('<p>使用前請閱讀以下須知：</p>'), 1200);
+setTimeout(() => bot('<p>華航最新消息：</p>'), 2200);
+document.querySelector('.wc-shellinput').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const q = e.target.value;
+  e.target.value = '';
+  log.insertAdjacentHTML('beforeend', `<div class="wc-message wc-message-from-me"><p>${q}</p></div>`);
+  setTimeout(() => {
+    bot(`<p>Answer to: ${q}</p>\n\n\n<ul><li>Dogs travel in the cargo hold.</li></ul>`, true);
+    log.insertAdjacentHTML('beforeend', '<button>Suggested question</button>');
+  }, 500);
+});
+</script>
+</body></html>

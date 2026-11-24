@@ -1,0 +1,25 @@
+<!doctype html>
+<html><body>
+<div style="height:600px">Vietjet</div>
+<a id="prime" style="position:fixed;right:20px;bottom:20px;width:150px;height:150px;display:block;background:red"></a>
+<script>
+// Minimal imitation of the VinBigdata widget: opening it connects and sends the Start postback.
+const NS = '/api/v1/chat_gateway';
+document.getElementById('prime').onclick = () => {
+  const url = 'wss://cloud.vinbase.ai/socket.io/?token=TEST&EIO=4&transport=websocket';
+  const ws = new WebSocket(url);
+  ws.onmessage = (m) => {
+    if (m.data.startsWith('0{')) ws.send('40' + NS + '?token=TEST');
+    else if (m.data.startsWith('42' + NS + ',')) {
+      const [event, payload] = JSON.parse(m.data.slice(('42' + NS + ',').length));
+      if (event === 'on_authenticated') {
+        ws.send('42' + NS + ',' + JSON.stringify(['on_user_postback', {
+          client_id: payload.client_id, data: 'Start', data_payload: '$START', language: 'en',
+          agent_id: 'AGENT', channel_id: 'CHANNEL', user_name: 'USER1', user_email: '', user_phone: '',
+          user_metadata: {vj_lang: 'en'}}]));
+      }
+    }
+  };
+};
+</script>
+</body></html>

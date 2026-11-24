@@ -1,0 +1,31 @@
+<!doctype html>
+<html><body>
+<ul id="log"></ul>
+<textarea placeholder="Type your message..."></textarea>
+<script>
+// Minimal imitation of the Salesforce Embedded Messaging iframe Sisu runs in.
+const log = document.getElementById('log');
+function typing(on) {
+  const t = document.querySelector('.chat-typing-indicator');
+  if (on && !t) log.insertAdjacentHTML('beforeend', '<li class="chat-typing-indicator">Sisu is typing</li>');
+  if (!on && t) t.remove();
+}
+function inbound(text) {
+  typing(false);
+  log.insertAdjacentHTML('beforeend', `<li><div class="embedded-messaging-inbound-chat-message"><p>${text}</p></div></li>`);
+}
+typing(true);
+setTimeout(() => inbound("Hi! I'm Sisu, Finnair's AI assistant. How can I help you today?"), 300);
+document.querySelector('textarea').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const q = e.target.value;
+  e.target.value = '';
+  log.insertAdjacentHTML('beforeend', `<li><div class="embedded-messaging-outbound-chat-message"><p>${q}</p></div></li>`);
+  typing(true);
+  // Two bubbles with a pause in between, like Sisu does for longer answers.
+  setTimeout(() => { inbound(`Answer to: ${q}`); typing(true); }, 400);
+  setTimeout(() => inbound('Economy Classic includes 1 checked bag, up to 23 kg.'), 1200);
+});
+</script>
+</body></html>
